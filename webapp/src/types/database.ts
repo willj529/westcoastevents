@@ -19,6 +19,8 @@ export interface Restaurant {
   private_dining_info: string | null;
   approximate_capacity: string | null;
   notes: string | null;
+  latitude: number | null;
+  longitude: number | null;
   created_at: string;
   updated_at: string;
 }

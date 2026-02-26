@@ -15,7 +15,6 @@ export default async function RegionPage({
   const { slug } = await params;
   const { cuisine, q } = await searchParams;
 
-  // Fetch region
   const { data: region } = await supabase
     .from("regions")
     .select("*")
@@ -26,7 +25,6 @@ export default async function RegionPage({
 
   const typedRegion = region as Region;
 
-  // Fetch restaurants for this region
   let query = supabase
     .from("restaurants")
     .select("*")
@@ -45,7 +43,6 @@ export default async function RegionPage({
   const { data: restaurants } = await query;
   const typedRestaurants = (restaurants || []) as Restaurant[];
 
-  // Get unique cuisine types for filter
   const { data: allRestaurants } = await supabase
     .from("restaurants")
     .select("cuisine_type")
@@ -61,9 +58,9 @@ export default async function RegionPage({
   ].sort();
 
   return (
-    <div>
+    <div className="mx-auto max-w-7xl px-4 py-8">
       <Link
-        href="/"
+        href="/regions"
         className="mb-4 inline-block text-sm text-zinc-500 hover:text-zinc-700"
       >
         &larr; All Regions
@@ -81,7 +78,6 @@ export default async function RegionPage({
         </p>
       </div>
 
-      {/* Filters */}
       <div className="mb-6 flex flex-wrap gap-3">
         <form className="flex gap-2" action={`/regions/${slug}`}>
           <input
@@ -109,7 +105,6 @@ export default async function RegionPage({
         </form>
       </div>
 
-      {/* Cuisine filter chips */}
       {cuisineTypes.length > 0 && (
         <div className="mb-6 flex flex-wrap gap-1.5">
           {cuisineTypes.slice(0, 20).map((c) => (
@@ -128,7 +123,6 @@ export default async function RegionPage({
         </div>
       )}
 
-      {/* Restaurant list */}
       <div className="space-y-3">
         {typedRestaurants.map((restaurant) => (
           <Link

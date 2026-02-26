@@ -56,7 +56,7 @@ export default async function RestaurantPage({
   const r = restaurant as RestaurantWithRegion;
 
   return (
-    <div>
+    <div className="mx-auto max-w-3xl px-4 py-8">
       <Link
         href={`/regions/${r.regions.slug}`}
         className="mb-4 inline-block text-sm text-zinc-500 hover:text-zinc-700"
@@ -77,7 +77,6 @@ export default async function RestaurantPage({
         </div>
 
         <div className="p-6">
-          {/* Contact info */}
           <h2 className="mb-2 text-sm font-semibold uppercase tracking-wider text-zinc-400">
             Contact
           </h2>
@@ -101,7 +100,6 @@ export default async function RestaurantPage({
             <InfoRow label="Yelp" value={r.yelp_url ? "View on Yelp" : null} href={r.yelp_url || undefined} />
           </div>
 
-          {/* Event info */}
           {(r.private_dining_info || r.approximate_capacity) && (
             <>
               <h2 className="mb-2 text-sm font-semibold uppercase tracking-wider text-zinc-400">
@@ -117,7 +115,6 @@ export default async function RestaurantPage({
             </>
           )}
 
-          {/* Notes */}
           {r.notes && (
             <>
               <h2 className="mb-2 text-sm font-semibold uppercase tracking-wider text-zinc-400">
