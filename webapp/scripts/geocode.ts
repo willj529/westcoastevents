@@ -63,6 +63,7 @@ async function main() {
     .is("latitude", null)
     .not("address", "is", null)
     .neq("address", "")
+    .or("geocode_failed.is.null,geocode_failed.eq.false")
     .order("id");
 
   if (regionSlug) {
@@ -114,7 +115,12 @@ async function main() {
         success++;
       }
     } else {
-      console.log("not found");
+      // Mark as failed so it gets skipped on future runs
+      await supabase
+        .from("restaurants")
+        .update({ geocode_failed: true })
+        .eq("id", r.id);
+      console.log("not found (skipped)");
       failed++;
     }
 

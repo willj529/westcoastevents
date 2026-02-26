@@ -30,22 +30,34 @@ export async function GET() {
     .select("*", { count: "exact", head: true })
     .or("address.is.null,address.eq.");
 
-  // Get next restaurant to geocode
+  const { count: failedCount } = await supabase
+    .from("restaurants")
+    .select("*", { count: "exact", head: true })
+    .eq("geocode_failed", true);
+
+  // Get next restaurant to geocode (skip previously failed ones)
   const { data: next } = await supabase
     .from("restaurants")
     .select("id, name, address")
     .is("latitude", null)
     .not("address", "is", null)
     .neq("address", "")
+    .or("geocode_failed.is.null,geocode_failed.eq.false")
     .order("id")
     .limit(1)
     .single();
 
+  const total = totalCount || 0;
+  const geocoded = geocodedCount || 0;
+  const noAddress = noAddressCount || 0;
+  const failed = failedCount || 0;
+
   return NextResponse.json({
-    total: totalCount || 0,
-    geocoded: geocodedCount || 0,
-    noAddress: noAddressCount || 0,
-    remaining: (totalCount || 0) - (geocodedCount || 0) - (noAddressCount || 0),
+    total,
+    geocoded,
+    noAddress,
+    failed,
+    remaining: total - geocoded - noAddress - failed,
     next: next || null,
   });
 }
@@ -82,7 +94,11 @@ export async function POST(request: Request) {
   const data = await res.json();
 
   if (data.length === 0) {
-    // Mark as attempted but not found (set to 0,0 would be wrong, just skip)
+    // Mark as failed so it gets skipped on future runs
+    await supabase
+      .from("restaurants")
+      .update({ geocode_failed: true })
+      .eq("id", id);
     return NextResponse.json({ success: false, reason: "Address not found" });
   }
 

@@ -7,6 +7,7 @@ interface GeoStatus {
   total: number;
   geocoded: number;
   noAddress: number;
+  failed: number;
   remaining: number;
   next: { id: number; name: string; address: string } | null;
 }
@@ -117,7 +118,7 @@ export default function GeocodePage() {
       {/* Status card */}
       <div className="mb-6 rounded-lg border border-zinc-200 bg-white p-6">
         {status ? (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
             <div>
               <div className="text-2xl font-bold">{status.total}</div>
               <div className="text-sm text-zinc-500">Total</div>
@@ -133,6 +134,12 @@ export default function GeocodePage() {
                 {status.remaining}
               </div>
               <div className="text-sm text-zinc-500">Remaining</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-red-400">
+                {status.failed}
+              </div>
+              <div className="text-sm text-zinc-500">Not Found</div>
             </div>
             <div>
               <div className="text-2xl font-bold text-zinc-400">
